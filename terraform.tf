@@ -54,7 +54,6 @@ resource "aws_s3_bucket_object" "jclip_bucket_object" {
   bucket = "jclip"
   key    = "${data.archive_file.jclip_zip.output_base64sha256}.zip"
   source = "dist.zip"
-
   # The filemd5() function is available in Terraform 0.11.12 and later
   # For Terraform 0.11.11 and earlier, use the md5() function and the file() function:
   # etag = "${md5(file("path/to/file"))}"
