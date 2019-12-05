@@ -14,8 +14,7 @@
     "test:prod:all": "NODE_ENV=production mocha -r ./mocha.js --timeout 10000 ./src/test/**/*.spec.ts",
     "test:local:watch": "NODE_ENV=test nodemon -r ./mocha.js ./src/test/express.ts --watch ./src -e ts",
     "lint": "tslint ./src/**/*.ts",
-    "type-check": "tsc --noEmit",
-    "coverage": "NODE_ENV=test nyc --nycrc-path ./.nycrc mocha --timeout 10000 -r ./mocha.js ./src/test/**/*.spec.ts "
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",

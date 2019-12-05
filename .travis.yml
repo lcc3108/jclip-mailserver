@@ -33,39 +33,17 @@ before_install:
       cd $PWD/$DIRECTORY
     fi
   - gcloud auth activate-service-account --key-file=google_key.json
-  - |
-    if [ ! -d "$HOME/cc-test-reporter/bin" ]; then
-      rm -rf "$HOME/cc-test-reporter";
-      mkdir -p $HOME/cc-test-reporter/bin;
-      curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > $HOME/cc-test-reporter/bin/cc-test-reporter;
-      chmod +x $HOME/cc-test-reporter/bin/cc-test-reporter
-    fi
-  - export PATH=$PATH:$HOME/cc-test-reporter/bin
 install:
   - yarn
-after_script:
-  - cd $TRAVIS_BUILD_DIR
-  - if [[ "$TRAVIS_TEST_RESULT" == 0 ]]; then cc-test-reporter format-coverage -t lcov
-    -o ./coverage/codeclimate.$TRAVIS_JOB_NUMBER.json ./*/coverage/*.info; fi
-  - if [[ "$TRAVIS_TEST_RESULT" == 0 ]]; then gsutil cp -r coverage/ gs://lcc3108-nodejs-test-bucket/coverage/$TRAVIS_BUILD_NUMBER;
-    fi
-  - if [[ "$TRAVIS_TEST_RESULT" == 0 ]]; then gsutil cp -r gs://lcc3108-nodejs-test-bucket/coverage/$TRAVIS_BUILD_NUMBER
-    coverage/; fi
-  - if [[ "$TRAVIS_TEST_RESULT" == 0 ]]; then cc-test-reporter sum-coverage --parts
-    1 coverage/*.json; fi
-  - if [[ "$TRAVIS_TEST_RESULT" == 0 ]]; then cc-test-reporter upload-coverage --id
-    $CC_TEST_REPORTER_ID; fi
 jobs:
   include:
     - stage: test
       env: DIRECTORY=backend
       before_script:
         - openssl aes-256-cbc -K $encrypted_a0b6ad2b92c2_key -iv $encrypted_a0b6ad2b92c2_iv -in .env.enc -out .env -d
-        - cc-test-reporter before-build
       script:
         - yarn lint
         - yarn type-check
-        - yarn coverage
         - yarn build
     - stage: deploy
       before_script:
