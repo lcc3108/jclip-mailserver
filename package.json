@@ -5,7 +5,7 @@
   "scripts": {
     "install": "cd backend && yarn install",
     "build": "cd backend && yarn build",
-    "prebuild": "yarn install:all",
+    "prebuild": "yarn install",
     "deploy": "terraform plan && terraform apply --auto-approve"
   }
 }

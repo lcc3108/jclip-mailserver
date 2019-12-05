@@ -48,7 +48,6 @@ jobs:
         - yarn build
     - stage: deploy
       env: CLOUD=AWS
-
       script:
         - yarn build
       before_deploy:
