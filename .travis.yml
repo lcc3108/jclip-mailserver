@@ -10,7 +10,7 @@ env:
   global:
     - secure: p/c6ViUEAHhs0nV7xWVZCrfxjFwSVVENcT89HwgaPk0t8KsPbmA13dR8Zz6lJ8qUBMpx+MKm0c98/aG/JFUQrc9D8gbpBpU5wJUlHpO4ZdXww2U13+baDFe3md84t7oFxKzEcAvFo0G/tRFTFyir+jgzGwlwAlB18+iKwc+4Zg9GmFgkp/sO84A/SIIAa9VM7ELNG4Z9B8wtYd+iTQfy20noF6M6QYq9HyhU5oeVLjnrchpjUO4SCXsHuh6uAVbCuFNA9yXxrD3IVEedfB0Grpniwvcjlfj+LvximYccn1Ppw+Q6pQEif2ZgfQySuk/T53ZFnZTpEy2U3uc470rLaaRYLiBOdG3Fad1Lh8SOfXPPrX1pc2BOdg4962XtlD//88FXzWyxk2bg4ID27xFc+huWUJ8dEjzFNFjT74o2dO0BW7u0RtK9JqggI2kwcJn4NkbXUomhO7LeEe6gST2vL7AZt7+A2i72N4y2EZiMaIsgPlgrQ8zesX/yI4/Oju2Q6eq4WNCygyHwQvMeNt5nP5MI136MyBKAV22abxLgqVnlP1xSXNAgHMDxBkd5I/oSciDZ+kx36sEpRKOlbyYSP7QTPHekR1B6XWXBtL2VwwFuPQ2lBmlgOVMwBFZQGL6KQgljJ2suC2gpdq1duEjqZsjHzSvrilKT75UqkaXRqHk=
     - secure: TGzr6ASX+P6AVAaL5Kw+PjD+embUp4IXjette2HIWRNht39bJiaYIWv9noM61xPa6yn49EbwcMtDOsfwehF7BwnBcH3c8YrvGYOpCgC8StpEvFi5QLbOz/GcUd/pSjW5zdQHtIiJF/BrYj76neiFZ7+y4CNUICZYyChUkBPeughWqMZH0RQ9CqikGVgDekYADay93MQXzFYBoYgk3fPfXYtBZyW5xSh4F/NebogL6WTy6zcC9cBROxY8dTsncUZg/DLDxdsAbgbpgHM6mHmrMPIbKF9JxJZZl3xw6lqSBfODOu00eKksMlZbcENkHNt5KBlB0iiVQ7QWUpHqlf8iuMN8tHnE6RZaKbU/XbAjcT6trPELkIntuMyiKNHYuNJenuLxuLhDpbbTAJRQFpp7Aehelp9f1xPEpqBb/lsqZKIy35mqIRefmRyVYLFX+VmUSyf5jozSd4OJaGIqoikNf6NVHeT4UPinAyNmGe1q9rnRuJL0BYNa0Itm4IUzXziM0EtZizGCkhT+2uAd46OH9qxfakOroZ87XCRZ9ikv2otNRF30hEztqH7xtzFoMbLNuxxnjEPVF5IqwsAmxF7L4aCs5eg1ODuM5nuAU29GmvseDMb/TM/UzaNxGF7wZheiVy8rziL9xMp7rjjVYrA43WNmIyua/FRfCVh7KwxhW6c=
-    - secure: aeNeu2r1UXhulb8esymWyPNY+14yVFfh7o9f8KXCiQOBOXUQIfKsCIpNLa3hTqdDfxCU3u3eeHRVCtX/bExcOuWdjvLSdDqLWs7J0j0DvihGrF8yRJ2XJ/Gae3jB13cJ7IUV33y3f9Uaot66FHE2an1Xzh+KCSgiLQwVxZUXmVtcyegSi/u1pux+IcScMaC9qjaLu5ijc3UPZMINcNc4aJmeDOuSj+CXWlr9XQGqszK5BfpIGnpChCfRb4d55cszCUL41esvqgLFTLhOnA5LPnh6FAc0DdRZKbnq7VKprdUFzZstraRZ6z8XJXrKjldbAV6AhiJOzGAZFxW/NgIFQpVb0BdkUrhOmpvYrJxTHgC2J936VxUpXNWwjYAMl9CFDD5hA312+sRZjvvtZ1Nn5PQYOyejfSe7gt1ZBJHJTvzafSoAy3zzzylac4a+ySaAyc0S6Oqutiy+XW5Wfp+7AfXBCkC6BJO2BR40VlH3DiatJtSg3q7aFjtlg6hcgX9WIqzKBluotWW0ItVrvX5hWSLerrGLICmMgRak/OSjfR5Jnhl0x6i5O9D8+Qu5uAbs647S9KZVNNojzntRZ7612+ubXItiBf8gDZWK3hV/WPo5qwYfn3NeV0106Y7Eiu1KbAnZze5yIOQUTYXRO0kzs8QTm+IjeGckzKHXfnv5Stk=
+    - secure: nHqOVtDgV8c07r7+BJeSnsGlZ+l1tHHgK+FDVi1c2rkGkmS8lhbLU3+JZp1HbSBZmgn3bVe8rxQqz2cPFVXOVwWHWA/xoSTj2xXtHQaKwMvat6ia1f0H94/+ugjAWvm+KI3v87TPUJCFaIo03qQQ0tSdfA+Ik0d3zRyjT7cN0DeNeLg3cNyhffT6D9j117LGCPgOt6UtK39ugIbsjc6HAz0alzEcnLEB8ejb+4g5dNK0YFuY7MlUuVD7EgCM6+0gjrZ392vqM1UXMmEUBzabbpaZ8NCoAO+u94O9lQBtDTU2dIVE3qEi6V1WgqYdu28ThfpVAdBl2OSgcGVIpF2lReQ/u/NimbWGwhCuut9YOQA9gRtJUefylHIgy1OMZroFA8466p+mkdTnH39iORNH5Hx/2pgGCPHk8t/jTfp+Y5XwRppSOARph3hKk/FNf9yAqck/aw30OshX9RWqlDN6v48psc2uyinzm9mNEXCdTYmdcrcvyRPK+fPPOQte3FZVUoabJ3mxzD7d68YQuVdJ8R4DtYYAwQYblLtijUrvfDjuCGvnt4syH9y3gytrcsp+q3pALp4I503pvnMtL0RdTQ1Qvy7Z8K1hEu6UzoQl9dnxNZQMYxtjsxfCuPsEAnHhvgGanimZ1H4jtxfnxXpaUOHwLhDDM7k3tgjyJhSGe2E=
 before_install:
   - openssl aes-256-cbc -K $encrypted_3e39b73e0d5c_key -iv $encrypted_3e39b73e0d5c_iv
     -in google_key.json.enc -out google_key.json -d
@@ -38,7 +38,7 @@ jobs:
       script:
         - yarn build
       before_deploy:
-        - echo credentials \"app.terraform.io\" { token = \"$token\" } | cat >> ~/.terraformrc
+        - echo credentials \"app.terraform.io\" { token = \"$TOKEN\" } | cat >> ~/.terraformrc
         - ls -l
         - terraform init
       deploy:
