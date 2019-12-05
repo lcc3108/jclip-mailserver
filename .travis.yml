@@ -24,16 +24,11 @@ before_install:
       unzip terraform_0.12.6_linux_amd64.zip -d $HOME/terraform/bin/
     fi
   - export PATH=$PATH:$HOME/terraform/bin
-  - |
-    if [ -d "$PWD/$DIRECTORY" ]; then
-      cd $PWD/$DIRECTORY
-    fi
 install:
   - yarn
 jobs:
   include:
     - stage: test
-      env: DIRECTORY=backend
       script:
         - yarn lint
         - yarn type-check
@@ -44,11 +39,7 @@ jobs:
         - yarn build
       before_deploy:
         - echo credentials \"app.terraform.io\" { token = \"$token\" } | cat >> ~/.terraformrc
-        - |
-          if [  -d "/home/travis/.cache/yarn" ]; then
-          ls /home/travis/.cache/yarn
-          cp -t ./backend/dist /home/travis/.cache/yarn/node_modules/
-          fi
+        - ls -l
         - terraform init
       deploy:
         - provider: script
