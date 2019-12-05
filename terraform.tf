@@ -31,7 +31,7 @@ resource "google_storage_bucket" "bucket" {
 }
 
 resource "google_storage_bucket_object" "backend_object" {
-  name   = "${data.archive_file.jclip_zip.output_base64sha256}.zip"
+  name   = "${data.archive_file.jclip_zip.output_sha}.zip"
   bucket = google_storage_bucket.bucket.name
   source = data.archive_file.jclip_zip.output_path
 }
