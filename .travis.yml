@@ -24,6 +24,10 @@ before_install:
       unzip terraform_0.12.6_linux_amd64.zip -d $HOME/terraform/bin/
     fi
   - export PATH=$PATH:$HOME/terraform/bin
+  - |
+    if [ -d "$PWD/$DIRECTORY" ]; then
+      cd $PWD/$DIRECTORY
+    fi
 install:
   - yarn
 jobs:
