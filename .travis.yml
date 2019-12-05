@@ -45,5 +45,5 @@ jobs:
         - provider: script
           script: yarn deploy
           skip_cleanup: true
-          on:
-            branch: master
+          # on:
+          #   branch: master
