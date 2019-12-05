@@ -163,6 +163,3 @@ POLICY
 
 }
 
-output "name" {
-  value = "${cloudToken}"
-}
