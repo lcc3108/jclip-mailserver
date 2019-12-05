@@ -13,8 +13,8 @@ env:
   - secure: p/c6ViUEAHhs0nV7xWVZCrfxjFwSVVENcT89HwgaPk0t8KsPbmA13dR8Zz6lJ8qUBMpx+MKm0c98/aG/JFUQrc9D8gbpBpU5wJUlHpO4ZdXww2U13+baDFe3md84t7oFxKzEcAvFo0G/tRFTFyir+jgzGwlwAlB18+iKwc+4Zg9GmFgkp/sO84A/SIIAa9VM7ELNG4Z9B8wtYd+iTQfy20noF6M6QYq9HyhU5oeVLjnrchpjUO4SCXsHuh6uAVbCuFNA9yXxrD3IVEedfB0Grpniwvcjlfj+LvximYccn1Ppw+Q6pQEif2ZgfQySuk/T53ZFnZTpEy2U3uc470rLaaRYLiBOdG3Fad1Lh8SOfXPPrX1pc2BOdg4962XtlD//88FXzWyxk2bg4ID27xFc+huWUJ8dEjzFNFjT74o2dO0BW7u0RtK9JqggI2kwcJn4NkbXUomhO7LeEe6gST2vL7AZt7+A2i72N4y2EZiMaIsgPlgrQ8zesX/yI4/Oju2Q6eq4WNCygyHwQvMeNt5nP5MI136MyBKAV22abxLgqVnlP1xSXNAgHMDxBkd5I/oSciDZ+kx36sEpRKOlbyYSP7QTPHekR1B6XWXBtL2VwwFuPQ2lBmlgOVMwBFZQGL6KQgljJ2suC2gpdq1duEjqZsjHzSvrilKT75UqkaXRqHk=
   - secure: TGzr6ASX+P6AVAaL5Kw+PjD+embUp4IXjette2HIWRNht39bJiaYIWv9noM61xPa6yn49EbwcMtDOsfwehF7BwnBcH3c8YrvGYOpCgC8StpEvFi5QLbOz/GcUd/pSjW5zdQHtIiJF/BrYj76neiFZ7+y4CNUICZYyChUkBPeughWqMZH0RQ9CqikGVgDekYADay93MQXzFYBoYgk3fPfXYtBZyW5xSh4F/NebogL6WTy6zcC9cBROxY8dTsncUZg/DLDxdsAbgbpgHM6mHmrMPIbKF9JxJZZl3xw6lqSBfODOu00eKksMlZbcENkHNt5KBlB0iiVQ7QWUpHqlf8iuMN8tHnE6RZaKbU/XbAjcT6trPELkIntuMyiKNHYuNJenuLxuLhDpbbTAJRQFpp7Aehelp9f1xPEpqBb/lsqZKIy35mqIRefmRyVYLFX+VmUSyf5jozSd4OJaGIqoikNf6NVHeT4UPinAyNmGe1q9rnRuJL0BYNa0Itm4IUzXziM0EtZizGCkhT+2uAd46OH9qxfakOroZ87XCRZ9ikv2otNRF30hEztqH7xtzFoMbLNuxxnjEPVF5IqwsAmxF7L4aCs5eg1ODuM5nuAU29GmvseDMb/TM/UzaNxGF7wZheiVy8rziL9xMp7rjjVYrA43WNmIyua/FRfCVh7KwxhW6c=
 before_install:
-- openssl aes-256-cbc -K $[your-key] -iv $[your-iv] -in google_key.json.enc -out google_key.json
-  -d
+- openssl aes-256-cbc -K $encrypted_3e39b73e0d5c_key -iv $encrypted_3e39b73e0d5c_iv
+  -in google_key.json.enc -out google_key.json -d
 - |
   if [ ! -d "$HOME/terraform/bin" ]; then
     rm -rf "$HOME/terraform"
