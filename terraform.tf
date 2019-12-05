@@ -1,11 +1,21 @@
+# TF-UPGRADE-TODO: Block type was not recognized, so this block and its contents were not automatically upgraded.
 #init
-locals {
-  vars =  "${file("aws_key.json")}"
+
+terraform {
+  backend "remote" {
+    hostname     = "app.terraform.io"
+    organization = "jclip"
+
+    workspaces {
+      name = "jclip-mailserver"
+    }
+  }
 }
+
 #google
 # GCP SETTING
 provider "google" {
-  credentials = "${file("google_key.json")}"
+  credentials = file("google_key.json")
   project     = "jclip"
   region      = "asia-east2"
 }
@@ -21,26 +31,29 @@ resource "google_storage_bucket" "bucket" {
 }
 
 resource "google_storage_bucket_object" "backend_object" {
-  name   = "${data.archive_file.backend_zip.output_base64sha256}.zip"
-  bucket = "${google_storage_bucket.bucket.name}"
-  source = "${data.archive_file.backend_zip.output_path}"
+  name   = "${data.archive_file.jclip_zip.output_base64sha256}.zip"
+  bucket = google_storage_bucket.bucket.name
+  source = data.archive_file.jclip_zip.output_path
 }
+
 resource "google_cloudfunctions_function" "function" {
-  name                  = "jclip_api server"
-  description           = "My function"
-  runtime               = "nodejs8"
+  name        = "jclip_api_server"
+  description = "My function"
+  runtime     = "nodejs8"
 
   available_memory_mb   = 256
-  source_archive_bucket = "${google_storage_bucket.bucket.name}"
-  source_archive_object = "${google_storage_bucket_object.backend_object.name}"
+  source_archive_bucket = google_storage_bucket.bucket.name
+  source_archive_object = google_storage_bucket_object.backend_object.name
   trigger_http          = true
   timeout               = 60
   entry_point           = "graphql"
 }
+
 #aws
 provider "aws" {
   region = "us-east-1"
 }
+
 #source upload
 
 resource "aws_s3_bucket" "jclip_bucket" {
@@ -50,6 +63,7 @@ resource "aws_s3_bucket" "jclip_bucket" {
     enabled = true
   }
 }
+
 resource "aws_s3_bucket_object" "jclip_bucket_object" {
   bucket = "jclip"
   key    = "${data.archive_file.jclip_zip.output_base64sha256}.zip"
@@ -58,72 +72,75 @@ resource "aws_s3_bucket_object" "jclip_bucket_object" {
   # For Terraform 0.11.11 and earlier, use the md5() function and the file() function:
   # etag = "${md5(file("path/to/file"))}"
 }
+
 resource "aws_api_gateway_rest_api" "api" {
   name = "myapi"
 }
 
 resource "aws_api_gateway_resource" "resource" {
   path_part   = "resource"
-  parent_id   = "${aws_api_gateway_rest_api.api.root_resource_id}"
-  rest_api_id = "${aws_api_gateway_rest_api.api.id}"
+  parent_id   = aws_api_gateway_rest_api.api.root_resource_id
+  rest_api_id = aws_api_gateway_rest_api.api.id
 }
 
 resource "aws_api_gateway_method" "method" {
-  rest_api_id   = "${aws_api_gateway_rest_api.api.id}"
-  resource_id   = "${aws_api_gateway_resource.resource.id}"
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  resource_id   = aws_api_gateway_resource.resource.id
   http_method   = "ANY"
   authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "integration" {
-  rest_api_id             = "${aws_api_gateway_rest_api.api.id}"
-  resource_id             = "${aws_api_gateway_resource.resource.id}"
-  http_method             = "${aws_api_gateway_method.method.http_method}"
+  rest_api_id             = aws_api_gateway_rest_api.api.id
+  resource_id             = aws_api_gateway_resource.resource.id
+  http_method             = aws_api_gateway_method.method.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  uri                     = "${aws_lambda_function.lambda.invoke_arn}"
+  uri                     = aws_lambda_function.lambda.invoke_arn
 }
 
 # Lambda
 resource "aws_lambda_permission" "apigw_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = "${aws_lambda_function.lambda.function_name}"
+  function_name = aws_lambda_function.lambda.function_name
   principal     = "apigateway.amazonaws.com"
-  
+
   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
   source_arn = "arn:aws:execute-api:us-east-1:906259781909:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.method.http_method}${aws_api_gateway_resource.resource.path}"
 }
 
 resource "aws_lambda_function" "lambda" {
-  s3_bucket = "jclip"
-  s3_key    = "${data.archive_file.jclip_zip.output_base64sha256}.zip"
+  s3_bucket     = "jclip"
+  s3_key        = "${data.archive_file.jclip_zip.output_base64sha256}.zip"
   function_name = "mylambda"
-  role          = "${aws_iam_role.role.arn}"
+  role          = aws_iam_role.role.arn
   handler       = "index.handler"
   runtime       = "nodejs8.10"
-
   # The filebase64sha256() function is available in Terraform 0.11.12 and later
   # For Terraform 0.11.11 and earlier, use the base64sha256() function and the file() function:
   # source_code_hash = "${base64sha256(file("lambda.zip"))}"
 }
+
 resource "aws_api_gateway_stage" "default" {
   stage_name    = "default"
-  rest_api_id   = "${aws_api_gateway_rest_api.api.id}"
-  deployment_id = "${aws_api_gateway_deployment.test.id}"
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  deployment_id = aws_api_gateway_deployment.test.id
 }
+
 resource "aws_api_gateway_deployment" "test" {
-  depends_on  = ["aws_api_gateway_integration.integration"]
-  rest_api_id = "${aws_api_gateway_rest_api.api.id}"
+  depends_on  = [aws_api_gateway_integration.integration]
+  rest_api_id = aws_api_gateway_rest_api.api.id
   stage_name  = "dev"
 }
 
 resource "aws_api_gateway_method_response" "response_200" {
-  rest_api_id = "${aws_api_gateway_rest_api.api.id}"
-  resource_id = "${aws_api_gateway_resource.resource.id}"
-  http_method = "${aws_api_gateway_method.method.http_method}"
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.resource.id
+  http_method = aws_api_gateway_method.method.http_method
   status_code = "200"
 }
+
 # IAM
 resource "aws_iam_role" "role" {
   name = "myrole"
@@ -143,6 +160,9 @@ resource "aws_iam_role" "role" {
   ]
 }
 POLICY
+
 }
 
-
+output "name" {
+  value = "${cloudToken}"
+}
