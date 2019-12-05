@@ -31,7 +31,7 @@ resource "google_storage_bucket" "bucket" {
 }
 
 resource "google_storage_bucket_object" "backend_object" {
-  name   = "${data.archive_file.jclip_zip.md5}.zip"
+  name   = "${data.archive_file.jclip_zip.output_md5}.zip"
   bucket = google_storage_bucket.bucket.name
   source = data.archive_file.jclip_zip.output_path
 }
@@ -66,11 +66,11 @@ resource "aws_s3_bucket" "jclip_bucket" {
 
 resource "aws_s3_bucket_object" "jclip_bucket_object" {
   bucket = "jclip"
-  key    = "${data.archive_file.jclip_zip.md5}.zip"
+  key    = "${data.archive_file.jclip_zip.output_md5}.zip"
   source = "dist.zip"
-  # The filemd5() function is available in Terraform 0.11.12 and later
-  # For Terraform 0.11.11 and earlier, use the md5() function and the file() function:
-  # etag = "${md5(file("path/to/file"))}"
+  # The fileoutput_md5() function is available in Terraform 0.11.12 and later
+  # For Terraform 0.11.11 and earlier, use the output_md5() function and the file() function:
+  # etag = "${output_md5(file("path/to/file"))}"
 }
 
 resource "aws_api_gateway_rest_api" "api" {
@@ -112,7 +112,7 @@ resource "aws_lambda_permission" "apigw_lambda" {
 
 resource "aws_lambda_function" "lambda" {
   s3_bucket     = "jclip"
-  s3_key        = "${data.archive_file.jclip_zip.md5}.zip"
+  s3_key        = "${data.archive_file.jclip_zip.output_md5}.zip"
   function_name = "mylambda"
   role          = aws_iam_role.role.arn
   handler       = "index.handler"
