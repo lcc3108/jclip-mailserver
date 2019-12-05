@@ -1,13 +1,18 @@
-import { resolvers } from "@/controllers/graphql/resolvers";
-import { schemaDirectives } from "@/models/graphql/directives";
+import { ApolloServer } from "apollo-server-lambda";
 import { typeDefs } from "@/models/graphql/types";
-import { ApolloServer } from "apollo-server-express";
+import { resolvers } from "@/controllers/graphql/resolvers";
+// Construct a schema, using GraphQL schema language
 
-const server = new ApolloServer({
+export const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ req }) => ({ user: req["user"] }),
-  schemaDirectives,
-});
 
-export default server;
+  // By default, the GraphQL Playground interface and GraphQL introspection
+  // is disabled in "production" (i.e. when `process.env.NODE_ENV` is `production`).
+  //
+  // If you'd like to have GraphQL Playground and introspection enabled in production,
+  // the `playground` and `introspection` options must be set explicitly to `true`.
+  playground: true,
+  introspection: true,
+});
+server.setGraphQLPath("/");

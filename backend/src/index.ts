@@ -1,5 +1,4 @@
 import "@/config";
-import { app } from "@/controllers/app";
+import { server } from "@/controllers/graphql";
 
-export const graphql = app;
-export const test = true;
+exports.handler = server.createHandler();
