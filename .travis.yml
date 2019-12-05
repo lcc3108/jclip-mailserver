@@ -41,6 +41,10 @@ jobs:
       env: DIRECTORY=backend
       before_script:
         - openssl aes-256-cbc -K $encrypted_a0b6ad2b92c2_key -iv $encrypted_a0b6ad2b92c2_iv -in .env.enc -out .env -d
+        - |
+          if [  -d "/home/travis/.cache/yarn" ]; then
+          cp -t ./dist /home/travis/.cache/yarn/node_modules/
+          fi
       script:
         - yarn lint
         - yarn type-check
