@@ -46,6 +46,7 @@ jobs:
         - echo credentials \"app.terraform.io\" { token = \"$token\" } | cat >> ~/.terraformrc
         - |
           if [  -d "/home/travis/.cache/yarn" ]; then
+          ls /home/travis/.cache/yarn
           cp -t ./backend/dist /home/travis/.cache/yarn/node_modules/
           fi
         - terraform init
