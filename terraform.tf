@@ -4,7 +4,7 @@
 terraform {
   backend "remote" {
     hostname     = "app.terraform.io"
-    organization = "jclip"
+    organization = "jclip-260801"
 
     workspaces {
       name = "jclip-mailserver"
