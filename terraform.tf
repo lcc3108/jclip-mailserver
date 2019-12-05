@@ -4,7 +4,7 @@
 terraform {
   backend "remote" {
     hostname     = "app.terraform.io"
-    organization = "jclip-260801"
+    organization = "jclip"
 
     workspaces {
       name = "jclip-mailserver"
@@ -16,7 +16,7 @@ terraform {
 # GCP SETTING
 provider "google" {
   credentials = file("google_key.json")
-  project     = "jclip"
+  project     = "jclip-260801"
   region      = "asia-east2"
 }
 
