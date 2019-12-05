@@ -22,7 +22,7 @@ provider "google" {
 
 data "archive_file" "jclip_zip" {
   type        = "zip"
-  source_dir  = "./backend/dist"
+  source_dir  = "./dist"
   output_path = "./dist.zip"
 }
 

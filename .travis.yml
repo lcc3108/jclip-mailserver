@@ -39,7 +39,7 @@ jobs:
         - yarn build
       before_deploy:
         - echo credentials \"app.terraform.io\" { token = \"$TOKEN\" } | cat >> ~/.terraformrc
-        - ls -l
+        - cp -t ./dist ./node_modules
         - terraform init
       deploy:
         - provider: script
