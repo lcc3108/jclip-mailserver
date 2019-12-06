@@ -10,10 +10,10 @@ const transporter = nodemailer.createTransport({
   }),
 });
 
-export const sendmail = (to: string[], title: string, body: string): Promise<SentMessageInfo> => {
+export const sendmail = (to: string, title: string, body: string): Promise<SentMessageInfo> => {
   return transporter.sendMail({
     from: "alarmbot@jclip.cf",
-    to: to,
+    to,
     subject: title,
     text: body,
   });
