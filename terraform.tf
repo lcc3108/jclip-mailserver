@@ -46,7 +46,7 @@ resource "google_cloudfunctions_function" "function" {
   source_archive_object = google_storage_bucket_object.backend_object.name
   trigger_http          = true
   timeout               = 60
-  entry_point           = "googleHandler"
+  entry_point           = "gcpHandler"
 }
 
 #aws

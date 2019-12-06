@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
+    "apollo-server-cloud-functions": "^2.9.13",
     "apollo-server-lambda": "^2.9.12",
     "aws-serverless-express": "^3.3.6",
     "dotenv": "^8.0.0",
