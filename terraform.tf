@@ -46,7 +46,7 @@ resource "google_cloudfunctions_function" "function" {
   source_archive_object = google_storage_bucket_object.backend_object.name
   trigger_http          = true
   timeout               = 60
-  entry_point           = "handler"
+  entry_point           = "google_handler"
 }
 
 #aws
@@ -115,7 +115,7 @@ resource "aws_lambda_function" "lambda" {
   s3_key        = "${data.archive_file.jclip_zip.output_md5}.zip"
   function_name = "mylambda"
   role          = aws_iam_role.role.arn
-  handler       = "index.handler"
+  handler       = "index.aws_handler"
   runtime       = "nodejs8.10"
   # The filebase64sha256() function is available in Terraform 0.11.12 and later
   # For Terraform 0.11.11 and earlier, use the base64sha256() function and the file() function:

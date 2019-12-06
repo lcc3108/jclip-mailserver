@@ -1,4 +1,5 @@
 import "@/config";
 import { server } from "@/controllers/graphql";
 
-exports.handler = server.createHandler();
+export const aws_handler = server.createHandler();
+export const google_handler = server;
