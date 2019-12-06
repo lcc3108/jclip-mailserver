@@ -111,6 +111,7 @@ resource "aws_lambda_permission" "apigw_lambda" {
 }
 
 resource "aws_lambda_function" "lambda" {
+  depends_on    = [aws_s3_bucket_object.jclip_bucket_object]
   s3_bucket     = "jclip"
   s3_key        = "${data.archive_file.jclip_zip.output_md5}.zip"
   function_name = "mylambda"
