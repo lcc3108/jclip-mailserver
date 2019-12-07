@@ -1,4 +1,6 @@
 import "@/config";
-import { server } from "@/controllers/graphql";
+import { awsServer } from "@/controllers/graphql/aws";
+import { gcpServer } from "@/controllers/graphql/gcp";
 
-exports.handler = server.createHandler();
+export const awsHandler = awsServer.createHandler();
+export const gcpHandler = gcpServer.createHandler();

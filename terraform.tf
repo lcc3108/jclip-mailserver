@@ -16,13 +16,13 @@ terraform {
 # GCP SETTING
 provider "google" {
   credentials = file("google_key.json")
-  project     = "jclip"
+  project     = "jclip-260801"
   region      = "asia-east2"
 }
 
 data "archive_file" "jclip_zip" {
   type        = "zip"
-  source_dir  = "./backend/dist"
+  source_dir  = "./dist"
   output_path = "./dist.zip"
 }
 
@@ -31,7 +31,7 @@ resource "google_storage_bucket" "bucket" {
 }
 
 resource "google_storage_bucket_object" "backend_object" {
-  name   = "${data.archive_file.jclip_zip.output_base64sha256}.zip"
+  name   = "${data.archive_file.jclip_zip.output_md5}.zip"
   bucket = google_storage_bucket.bucket.name
   source = data.archive_file.jclip_zip.output_path
 }
@@ -40,13 +40,12 @@ resource "google_cloudfunctions_function" "function" {
   name        = "jclip_api_server"
   description = "My function"
   runtime     = "nodejs8"
-
   available_memory_mb   = 256
   source_archive_bucket = google_storage_bucket.bucket.name
   source_archive_object = google_storage_bucket_object.backend_object.name
   trigger_http          = true
   timeout               = 60
-  entry_point           = "graphql"
+  entry_point           = "gcpHandler"
 }
 
 #aws
@@ -66,19 +65,16 @@ resource "aws_s3_bucket" "jclip_bucket" {
 
 resource "aws_s3_bucket_object" "jclip_bucket_object" {
   bucket = "jclip"
-  key    = "${data.archive_file.jclip_zip.output_base64sha256}.zip"
+  key    = "${data.archive_file.jclip_zip.output_md5}.zip"
   source = "dist.zip"
-  # The filemd5() function is available in Terraform 0.11.12 and later
-  # For Terraform 0.11.11 and earlier, use the md5() function and the file() function:
-  # etag = "${md5(file("path/to/file"))}"
 }
 
 resource "aws_api_gateway_rest_api" "api" {
-  name = "myapi"
+  name = "jclip"
 }
 
 resource "aws_api_gateway_resource" "resource" {
-  path_part   = "resource"
+  path_part   = "api"
   parent_id   = aws_api_gateway_rest_api.api.root_resource_id
   rest_api_id = aws_api_gateway_rest_api.api.id
 }
@@ -105,17 +101,17 @@ resource "aws_lambda_permission" "apigw_lambda" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.lambda.function_name
   principal     = "apigateway.amazonaws.com"
-
   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
   source_arn = "arn:aws:execute-api:us-east-1:906259781909:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.method.http_method}${aws_api_gateway_resource.resource.path}"
 }
 
 resource "aws_lambda_function" "lambda" {
+  depends_on    = [aws_s3_bucket_object.jclip_bucket_object]
   s3_bucket     = "jclip"
-  s3_key        = "${data.archive_file.jclip_zip.output_base64sha256}.zip"
-  function_name = "mylambda"
+  s3_key        = "${data.archive_file.jclip_zip.output_md5}.zip"
+  function_name = "jclip_api"
   role          = aws_iam_role.role.arn
-  handler       = "index.handler"
+  handler       = "index.awsHandler"
   runtime       = "nodejs8.10"
   # The filebase64sha256() function is available in Terraform 0.11.12 and later
   # For Terraform 0.11.11 and earlier, use the base64sha256() function and the file() function:
@@ -131,7 +127,7 @@ resource "aws_api_gateway_stage" "default" {
 resource "aws_api_gateway_deployment" "test" {
   depends_on  = [aws_api_gateway_integration.integration]
   rest_api_id = aws_api_gateway_rest_api.api.id
-  stage_name  = "dev"
+  stage_name  = "test"
 }
 
 resource "aws_api_gateway_method_response" "response_200" {
@@ -163,6 +159,3 @@ POLICY
 
 }
 
-output "name" {
-  value = "${cloudToken}"
-}

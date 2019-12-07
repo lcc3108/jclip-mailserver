@@ -6,7 +6,7 @@
     "start": "node ./dist/index.js",
     "prebuild": "rm -rf dist",
     "build": "NODE_ENV=production node -r ./env.js ./node_modules/.bin/babel src --out-dir dist --copy-files --extensions \".ts,.tsx\"",
-    "postbuild": "cp -t ./dist package.json ../google_key.json",
+    "postbuild": "cp -t ./dist package.json",
     "deploy": "terraform plan && terraform apply --auto-approve",
     "test": "NODE_ENV=test mocha -r ./mocha.js --timeout 10000",
     "test:all": "NODE_ENV=test mocha -r ./mocha.js --timeout 10000 ./src/test/**/*.spec.ts",
@@ -19,11 +19,13 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
+    "apollo-server-cloud-functions": "^2.9.13",
     "apollo-server-lambda": "^2.9.12",
-    "aws-serverless-express": "^3.3.6",
+    "aws-sdk": "^2.585.0",
     "dotenv": "^8.0.0",
     "graphql": "^14.5.8",
     "morgan": "^1.9.1",
+    "nodemailer": "^6.4.0",
     "source-map-support": "^0.5.13"
   },
   "devDependencies": {
@@ -35,6 +37,7 @@
     "@types/dotenv": "^6.1.1",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.7.2",
+    "@types/nodemailer": "^6.2.2",
     "babel-plugin-module-resolver": "^3.2.0",
     "babel-plugin-transform-inline-environment-variables": "^0.4.3",
     "babel-preset-minify": "^0.5.1",
