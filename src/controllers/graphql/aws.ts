@@ -6,10 +6,10 @@ import jwt from "jsonwebtoken";
 export const awsServer = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ APIGatewayProxyEvent }) => {
-    if (!APIGatewayProxyEvent.headers.authorization) return { user: undefined };
+  context: ({ event }) => {
+    if (!event.headers.authorization) return { user: undefined };
 
-    const token = APIGatewayProxyEvent.headers.authorization.substr(7);
+    const token = event.headers.authorization.substr(7);
 
     try {
       const user = jwt.verify(token, Buffer.from(process.env.JWT_SECRET, "base64"));
