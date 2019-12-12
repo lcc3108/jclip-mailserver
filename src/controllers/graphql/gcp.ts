@@ -18,7 +18,7 @@ export const gcpServer = new ApolloServer({
       return { user: undefined };
     }
   },
-  playground: false,
-  introspection: false,
+  // playground: false,
+  // introspection: false,
 });
 gcpServer.setGraphQLPath("/");
