@@ -12,7 +12,7 @@ export const awsServer = new ApolloServer({
     const token = event.headers.authorization.substr(7);
 
     try {
-      const user = jwt.verify(token, Buffer.from(process.env.JWT_SECRET, "base64"));
+      const user = jwt.verify(token, Buffer.from(process.env.JWT_SECRET).toString("base64"));
       return { user };
     } catch {
       return { user: undefined };

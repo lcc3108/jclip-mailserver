@@ -7,14 +7,21 @@ export const gcpServer = new ApolloServer({
   typeDefs,
   resolvers,
   context: ({ req }) => {
-    if (!req.headers.authorization) return { user: undefined };
+    if (!req.headers.authorization) {
+      console.log("no header");
+      return { user: undefined };
+    }
 
     const token = req.headers.authorization.substr(7);
 
     try {
-      const user = jwt.verify(token, Buffer.from(process.env.JWT_SECRET, "base64"));
+      const user = jwt.verify(token, Buffer.from(process.env.JWT_SECRET).toString("base64"));
+      console.log("yes verify");
+
       return { user };
     } catch {
+      console.log("no verify");
+
       return { user: undefined };
     }
   },
