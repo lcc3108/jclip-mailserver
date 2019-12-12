@@ -9,7 +9,7 @@ export default {
       return { status: 403, message: "no auth" };
     }
     console.log("false");
-    const result = await sendmail(to, title, body);
+    const result = sendmail(to, title, body);
     return { status: 200, message: result };
   },
 };

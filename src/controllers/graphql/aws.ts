@@ -2,6 +2,7 @@ import { ApolloServer } from "apollo-server-lambda";
 import { typeDefs } from "@/models/graphql/types";
 import { resolvers } from "@/controllers/graphql/resolvers";
 import jwt from "jsonwebtoken";
+import { schemaDirectives } from "@/models/graphql/directives";
 
 export const awsServer = new ApolloServer({
   typeDefs,
@@ -18,6 +19,7 @@ export const awsServer = new ApolloServer({
       return { user: undefined };
     }
   },
+  schemaDirectives,
   playground: false,
   introspection: false,
 });

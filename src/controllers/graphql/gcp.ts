@@ -2,6 +2,7 @@ import { ApolloServer, gql } from "apollo-server-cloud-functions";
 import { typeDefs } from "@/models/graphql/types";
 import { resolvers } from "@/controllers/graphql/resolvers";
 import jwt from "jsonwebtoken";
+import { schemaDirectives } from "@/models/graphql/directives";
 
 export const gcpServer = new ApolloServer({
   typeDefs,
@@ -25,6 +26,7 @@ export const gcpServer = new ApolloServer({
       return { user: undefined };
     }
   },
+  schemaDirectives,
   // playground: false,
   // introspection: false,
 });
