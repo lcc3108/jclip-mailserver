@@ -15,7 +15,7 @@ export const gcpServer = new ApolloServer({
     const token = req.headers.authorization.substr(7);
     console.log("token", token);
     try {
-      const user = jwt.verify(token, Buffer.from(process.env.JWT_SECRET).toString("base64"), function(err, payload) {
+      const user = jwt.verify(token, Buffer.from(process.env.JWT_SECRET).toString("base64"), (err, payload) => {
         console.log("err", err);
         console.log("payload", payload);
       });
