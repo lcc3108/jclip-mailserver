@@ -46,4 +46,4 @@ jobs:
           script: yarn deploy
           skip_cleanup: true
           on:
-            branch: travis_setting
+            branch: master
