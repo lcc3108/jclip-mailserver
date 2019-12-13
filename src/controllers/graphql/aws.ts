@@ -8,6 +8,8 @@ export const awsServer = new ApolloServer({
   typeDefs,
   resolvers,
   context: ({ event }) => {
+    console.log("event", event);
+    console.log("event.header", event.header);
     if (!event.headers.authorization) {
       console.log("no header");
       return { user: undefined };
