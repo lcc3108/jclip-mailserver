@@ -10,6 +10,6 @@ export default {
     }
     console.log("false");
     const result = sendmail(to, title, body);
-    return { status: 200, message: result };
+    return { status: 200, message: result.toString() };
   },
 };
