@@ -9,13 +9,13 @@ export const awsServer = new ApolloServer({
   resolvers,
   context: ({ event }) => {
     console.log("event", event);
-    console.log("event.header", event.header);
-    if (!event.headers.authorization) {
+    console.log("event.header", event.headers);
+    if (!event.headers.Authorization) {
       console.log("no header");
       return { user: undefined };
     }
 
-    const token = event.headers.authorization.substr(7);
+    const token = event.headers.Authorization.substr(7);
     console.log("token", token);
 
     try {
