@@ -141,7 +141,7 @@ resource "aws_api_gateway_method_response" "response_200" {
 # This is to optionally manage the CloudWatch Log Group for the Lambda Function.
 # If skipping this resource configuration, also add "logs:CreateLogGroup" to the IAM policy below.
 resource "aws_cloudwatch_log_group" "example" {
-  name              = "/aws/lambda/mailer"
+  name              = "/aws/lambda/jclip_api"
   retention_in_days = 14
 }
 
