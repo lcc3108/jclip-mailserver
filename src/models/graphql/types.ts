@@ -11,6 +11,6 @@ export const typeDefs = gql`
     query_test: String
   }
   type Mutation {
-    sendEmail(to: String, title: String, body: String): Response! @isAuth
+    sendEmail(to: String, title: String, body: String): Response!
   }
 `;
