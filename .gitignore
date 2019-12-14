@@ -2,6 +2,7 @@ node_modules
 aws_key.json
 google_key.json
 .terraform
+*.tar
 *.log
 dist
 index.zip

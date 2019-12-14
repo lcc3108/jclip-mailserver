@@ -1,9 +1,19 @@
 import { sendmail } from "../mail/ses";
 
 export default {
-  sendEmail: async (_, { to, title, body }, { user }) => {
-    if (!user) return "no auth";
-    const result = await sendmail(to, title, body);
-    return result;
+  sendEmail: async (_, { to, title, body }, { user, ...etc }) => {
+    console.log("user", user);
+    console.log("etc", etc);
+    if (!user) {
+      console.log("true");
+      return { status: 403, message: "no auth" };
+    }
+    console.log("false");
+    try {
+      const result = await sendmail(to, title, body);
+      return { status: 200, message: result.messageId };
+    } catch (err) {
+      return { status: 500, message: err };
+    }
   },
 };

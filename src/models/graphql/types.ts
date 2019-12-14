@@ -1,6 +1,8 @@
 import { gql } from "apollo-server-lambda";
 
 export const typeDefs = gql`
+  directive @isAuth on FIELD_DEFINITION
+
   type Response {
     status: Int!
     message: String!
