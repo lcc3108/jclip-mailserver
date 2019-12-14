@@ -166,25 +166,26 @@ resource "aws_lb_listener" "default" {
   }
 }
 
-resource "aws_lb_listener_rule" "lambda" {
-  listener_arn = aws_lb_listener.default.arn
-  priority     = 100
+# resource "aws_lb_listener_rule" "lambda" {
+#   listener_arn = aws_lb_listener.default.arn
+#   priority     = 100
 
-  action {
-    type             = "forward"
-    target_group_arn =  aws_lb_target_group.default.arn
-  }
-
-  condition {
-    field  = "path-pattern"
-    values = ["/lambda/jclip_api"]
-  }
-}
+#   action {
+#     type             = "forward"
+#     target_group_arn =  aws_lb_target_group.default.arn
+#   }
+#   condition{
+#     path_pattern {
+#       values = ["/**"]
+#     }
+#   }
+  
+# }
 
 resource "aws_lambda_permission" "with_lb" {
   statement_id  = "AllowExecutionFromLB"
   action        = "lambda:InvokeFunction"
-  function_name = "jclip_api"
+  function_name = aws_lambda_function.lambda.function_name
   principal     = "elasticloadbalancing.amazonaws.com"
   source_arn    = aws_lb_target_group.default.arn
 }
