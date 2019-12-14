@@ -9,12 +9,11 @@ export default {
       return { status: 403, message: "no auth" };
     }
     console.log("false");
-    const result = sendmail(to, title, body)
-      .then((info) => {
-        return { status: 200, message: info.envelope };
-      })
-      .catch((err) => {
-        return { status: 500, message: err };
-      });
+    try {
+      const result = await sendmail(to, title, body);
+      return { status: 200, message: result.messageId };
+    } catch (err) {
+      return { status: 500, message: err };
+    }
   },
 };
