@@ -238,6 +238,7 @@ resource "aws_iam_policy" "lambda_logging" {
   "Statement": [
     {
       "Action": [
+        "ec2:CreateNetworkInterface",
         "logs:CreateLogGroup",
         "logs:CreateLogStream",
         "logs:PutLogEvents"],
