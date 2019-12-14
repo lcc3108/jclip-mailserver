@@ -1,6 +1,6 @@
 # TF-UPGRADE-TODO: Block type was not recognized, so this block and its contents were not automatically upgraded.
 #init
-
+#module
 terraform {
   backend "remote" {
     hostname     = "app.terraform.io"

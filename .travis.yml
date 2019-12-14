@@ -45,4 +45,4 @@ jobs:
           script: yarn deploy
           skip_cleanup: true
           on:
-            branch: jwt
+            branch: master
