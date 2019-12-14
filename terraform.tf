@@ -122,7 +122,7 @@ resource "aws_lambda_permission" "apigw_lambda" {
 
 resource "aws_lambda_function" "lambda" {
 
-  depends_on    = [aws_iam_role_policy_attachment.lambda_logs, aws_cloudwatch_log_group.example, aws_s3_bucket_object.jclip_bucket_object]
+  depends_on    = [aws_iam_role_policy_attachment.lambda_logs, aws_cloudwatch_log_group.example, aws_s3_bucket_object.jclip_bucket_object, aws_lb_target_group_attachment.default]
   role          = aws_iam_role.iam_for_lambda.arn
   s3_bucket     = "jclip"
   s3_key        = "${data.archive_file.jclip_zip.output_md5}.zip"
@@ -166,21 +166,21 @@ resource "aws_lb_listener" "default" {
   }
 }
 
-# resource "aws_lb_listener_rule" "lambda" {
-#   listener_arn = aws_lb_listener.default.arn
-#   priority     = 100
+resource "aws_lb_listener_rule" "lambda" {
+  listener_arn = aws_lb_listener.default.arn
+  priority     = 100
 
-#   action {
-#     type             = "forward"
-#     target_group_arn =  aws_lb_target_group.default.arn
-#   }
-#   condition{
-#     path_pattern {
-#       values = ["/**"]
-#     }
-#   }
+  action {
+    type             = "forward"
+    target_group_arn =  aws_lb_target_group.default.arn
+  }
+  condition{
+    path_pattern {
+      values = ["/**"]
+    }
+  }
   
-# }
+}
 
 resource "aws_lambda_permission" "with_lb" {
   statement_id  = "AllowExecutionFromLB"
