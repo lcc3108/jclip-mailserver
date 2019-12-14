@@ -122,7 +122,7 @@ resource "aws_lambda_permission" "apigw_lambda" {
 
 resource "aws_lambda_function" "lambda" {
 
-  depends_on    = [aws_iam_role_policy_attachment.lambda_logs, aws_cloudwatch_log_group.example, aws_s3_bucket_object.jclip_bucket_object, aws_lb_target_group_attachment.default]
+  depends_on    = [aws_iam_role_policy_attachment.lambda_logs, aws_cloudwatch_log_group.example, aws_s3_bucket_object.jclip_bucket_object]
   role          = aws_iam_role.iam_for_lambda.arn
   s3_bucket     = "jclip"
   s3_key        = "${data.archive_file.jclip_zip.output_md5}.zip"
@@ -238,7 +238,6 @@ resource "aws_iam_policy" "lambda_logging" {
   "Statement": [
     {
       "Action": [
-        "ec2:CreateNetworkInterface",
         "logs:CreateLogGroup",
         "logs:CreateLogStream",
         "logs:PutLogEvents"],
@@ -250,7 +249,37 @@ resource "aws_iam_policy" "lambda_logging" {
 EOF
 }
 
+resource "aws_iam_policy" "network" {
+  name = "lambda_logging"
+  path = "/"
+  description = "IAM policy for logging from a lambda"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeNetworkInterfaces",
+        "ec2:CreateNetworkInterface",
+        "ec2:DeleteNetworkInterface",
+        "ec2:DescribeInstances",
+        "ec2:AttachNetworkInterface"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
+  role = aws_iam_role.iam_for_lambda.name
+  policy_arn = aws_iam_policy.network.arn
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_network" {
   role = aws_iam_role.iam_for_lambda.name
   policy_arn = aws_iam_policy.lambda_logging.arn
 }
