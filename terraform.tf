@@ -250,7 +250,7 @@ EOF
 }
 
 resource "aws_iam_policy" "network" {
-  name = "lambda_logging"
+  name = "lambda_network"
   path = "/"
   description = "IAM policy for logging from a lambda"
 
