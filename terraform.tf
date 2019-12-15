@@ -174,10 +174,9 @@ resource "aws_lb_listener_rule" "lambda" {
     type             = "forward"
     target_group_arn =  aws_lb_target_group.default.arn
   }
-  condition{
-    path_pattern {
-      values = ["/**"]
-    }
+  condition {
+      field  = "path-pattern" 
+      values = ["/**"] 
   }
   
 }
