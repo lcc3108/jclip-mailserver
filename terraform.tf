@@ -83,146 +83,7 @@ resource "aws_s3_bucket_object" "jclip_bucket_object" {
   key    = "${data.archive_file.jclip_zip.output_md5}.zip"
   source = "dist.zip"
 }
-
-resource "aws_api_gateway_rest_api" "api" {
-  name = "jclip"
-}
-
-resource "aws_api_gateway_resource" "resource" {
-  path_part   = "api"
-  parent_id   = aws_api_gateway_rest_api.api.root_resource_id
-  rest_api_id = aws_api_gateway_rest_api.api.id
-}
-
-resource "aws_api_gateway_method" "method" {
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.resource.id
-  http_method   = "ANY"
-  authorization = "NONE"
-}
-
-resource "aws_api_gateway_integration" "integration" {
-  rest_api_id             = aws_api_gateway_rest_api.api.id
-  resource_id             = aws_api_gateway_resource.resource.id
-  http_method             = aws_api_gateway_method.method.http_method
-  integration_http_method = "POST"
-  type                    = "AWS_PROXY"
-  uri                     = aws_lambda_function.lambda.invoke_arn
-}
-
-# Lambda
-resource "aws_lambda_permission" "apigw_lambda" {
-  statement_id  = "AllowExecutionFromAPIGateway"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.lambda.function_name
-  principal     = "apigateway.amazonaws.com"
-  # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
-  source_arn = "arn:aws:execute-api:us-east-1:906259781909:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.method.http_method}${aws_api_gateway_resource.resource.path}"
-}
-
-resource "aws_lambda_function" "lambda" {
-
-  depends_on    = [aws_iam_role_policy_attachment.lambda_logs, aws_cloudwatch_log_group.example, aws_s3_bucket_object.jclip_bucket_object]
-  role          = aws_iam_role.iam_for_lambda.arn
-  s3_bucket     = "jclip"
-  s3_key        = "${data.archive_file.jclip_zip.output_md5}.zip"
-  function_name = "jclip_api"
-  handler       = "index.awsHandler"
-  runtime       = "nodejs8.10"
-   vpc_config {
-    subnet_ids         = data.aws_subnet_ids.default.ids
-    security_group_ids = data.aws_security_groups.default.ids
-  }
-  # The filebase64sha256() function is available in Terraform 0.11.12 and later
-  # For Terraform 0.11.11 and earlier, use the base64sha256() function and the file() function:
-  # source_code_hash = "${base64sha256(file("lambda.zip"))}"
-}
-
-#Aplication LoadBalancer
-
-resource "aws_lb" "default" {
-  name               = "jcliplb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = data.aws_security_groups.default.ids
-  subnets            = data.aws_subnet_ids.default.ids
-
-  enable_deletion_protection = false
-}
-
-resource "aws_lb_target_group" "default" {
-  name        = "jcliplb-TG"
-  target_type = "lambda"
-}
-
-resource "aws_lb_listener" "default" {
-  load_balancer_arn = aws_lb.default.arn
-  port              = "80"
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.default.arn
-  }
-}
-
-resource "aws_lb_listener_rule" "lambda" {
-  listener_arn = aws_lb_listener.default.arn
-  priority     = 100
-
-  action {
-    type             = "forward"
-    target_group_arn =  aws_lb_target_group.default.arn
-  }
-  condition {
-      field  = "path-pattern" 
-      values = ["/**"] 
-  }
-  
-}
-
-resource "aws_lambda_permission" "with_lb" {
-  statement_id  = "AllowExecutionFromLB"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.lambda.function_name
-  principal     = "elasticloadbalancing.amazonaws.com"
-  source_arn    = aws_lb_target_group.default.arn
-}
-
-resource "aws_lb_target_group_attachment" "default" {
-  depends_on = [aws_lambda_function.lambda, aws_lb_target_group.default]
-  target_group_arn = aws_lb_target_group.default.arn
-  target_id        = aws_lambda_function.lambda.arn
-}
-
-
-#API gateway
-resource "aws_api_gateway_stage" "default" {
-  stage_name    = "default"
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  deployment_id = aws_api_gateway_deployment.test.id
-}
-
-resource "aws_api_gateway_deployment" "test" {
-  depends_on  = [aws_api_gateway_integration.integration]
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  stage_name  = "test"
-}
-
-resource "aws_api_gateway_method_response" "response_200" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.resource.id
-  http_method = aws_api_gateway_method.method.http_method
-  status_code = "200"
-}
-
-# This is to optionally manage the CloudWatch Log Group for the Lambda Function.
-# If skipping this resource configuration, also add "logs:CreateLogGroup" to the IAM policy below.
-resource "aws_cloudwatch_log_group" "example" {
-  name              = "/aws/lambda/jclip_api"
-  retention_in_days = 14
-}
-
+# permision
 # See also the following AWS managed policy: AWSLambdaBasicExecutionRole
 resource "aws_iam_policy" "lambda_logging" {
   name = "lambda_logging"
@@ -271,16 +132,6 @@ resource "aws_iam_policy" "network" {
 EOF
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role = aws_iam_role.iam_for_lambda.name
-  policy_arn = aws_iam_policy.network.arn
-}
-
-resource "aws_iam_role_policy_attachment" "lambda_network" {
-  role = aws_iam_role.iam_for_lambda.name
-  policy_arn = aws_iam_policy.lambda_logging.arn
-}
-
 resource "aws_iam_role" "iam_for_lambda" {
   name = "iam_for_lambda"
 
@@ -300,6 +151,162 @@ resource "aws_iam_role" "iam_for_lambda" {
 }
 EOF
 }
+
+
+resource "aws_lambda_permission" "with_lb" {
+  statement_id  = "AllowExecutionFromLB"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda.function_name
+  principal     = "elasticloadbalancing.amazonaws.com"
+  source_arn    = aws_lb_target_group.default.arn
+}
+
+resource "aws_lambda_permission" "apigw_lambda" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
+  source_arn = "arn:aws:execute-api:us-east-1:906259781909:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.method.http_method}${aws_api_gateway_resource.resource.path}"
+}
+
+resource "aws_api_gateway_rest_api" "api" {
+  name = "jclip"
+}
+
+resource "aws_api_gateway_resource" "resource" {
+  path_part   = "api"
+  parent_id   = aws_api_gateway_rest_api.api.root_resource_id
+  rest_api_id = aws_api_gateway_rest_api.api.id
+}
+
+resource "aws_api_gateway_method" "method" {
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  resource_id   = aws_api_gateway_resource.resource.id
+  http_method   = "ANY"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "integration" {
+  rest_api_id             = aws_api_gateway_rest_api.api.id
+  resource_id             = aws_api_gateway_resource.resource.id
+  http_method             = aws_api_gateway_method.method.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.lambda.invoke_arn
+}
+
+
+resource "aws_lambda_function" "lambda" {
+
+  depends_on    = [aws_iam_role_policy_attachment.lambda_logs, aws_cloudwatch_log_group.example, aws_s3_bucket_object.jclip_bucket_object]
+  role          = aws_iam_role.iam_for_lambda.arn
+  s3_bucket     = "jclip"
+  s3_key        = "${data.archive_file.jclip_zip.output_md5}.zip"
+  function_name = "jclip_api"
+  handler       = "index.awsHandler"
+  runtime       = "nodejs8.10"
+   vpc_config {
+    subnet_ids         = data.aws_subnet_ids.default.ids
+    security_group_ids = data.aws_security_groups.default.ids
+  }
+  # The filebase64sha256() function is available in Terraform 0.11.12 and later
+  # For Terraform 0.11.11 and earlier, use the base64sha256() function and the file() function:
+  # source_code_hash = "${base64sha256(file("lambda.zip"))}"
+}
+
+
+#lambda attach
+resource "aws_iam_role_policy_attachment" "lambda_logs" {
+  role = aws_iam_role.iam_for_lambda.name
+  policy_arn = aws_iam_policy.network.arn
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_network" {
+  role = aws_iam_role.iam_for_lambda.name
+  policy_arn = aws_iam_policy.lambda_logging.arn
+}
+
+
+#Aplication LoadBalancer
+
+resource "aws_lb" "default" {
+  name               = "jcliplb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = data.aws_security_groups.default.ids
+  subnets            = data.aws_subnet_ids.default.ids
+
+  enable_deletion_protection = false
+}
+
+resource "aws_lb_target_group" "default" {
+  name        = "jcliplb-TG"
+  target_type = "lambda"
+}
+
+resource "aws_lb_listener" "default" {
+  load_balancer_arn = aws_lb.default.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.default.arn
+  }
+}
+
+resource "aws_lb_listener_rule" "lambda" {
+  listener_arn = aws_lb_listener.default.arn
+  priority     = 100
+
+  action {
+    type             = "forward"
+    target_group_arn =  aws_lb_target_group.default.arn
+  }
+  condition {
+      field  = "path-pattern" 
+      values = ["/**"] 
+  }
+  
+}
+
+
+resource "aws_lb_target_group_attachment" "default" {
+  depends_on = [aws_lambda_function.lambda, aws_lb_target_group.default]
+  target_group_arn = aws_lb_target_group.default.arn
+  target_id        = aws_lambda_function.lambda.arn
+}
+
+
+#API gateway
+resource "aws_api_gateway_stage" "default" {
+  stage_name    = "default"
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  deployment_id = aws_api_gateway_deployment.test.id
+}
+
+resource "aws_api_gateway_deployment" "test" {
+  depends_on  = [aws_api_gateway_integration.integration]
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  stage_name  = "test"
+}
+
+resource "aws_api_gateway_method_response" "response_200" {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  resource_id = aws_api_gateway_resource.resource.id
+  http_method = aws_api_gateway_method.method.http_method
+  status_code = "200"
+}
+
+# This is to optionally manage the CloudWatch Log Group for the Lambda Function.
+# If skipping this resource configuration, also add "logs:CreateLogGroup" to the IAM policy below.
+resource "aws_cloudwatch_log_group" "example" {
+  name              = "/aws/lambda/jclip_api"
+  retention_in_days = 14
+}
+
+
 
 # return base url
 output "aws_url" {
