@@ -154,26 +154,13 @@ EOF
 }
 
 
-resource "aws_lambda_permission" "with_lb" {
-  statement_id  = "AllowExecutionFromLB"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.lambda.function_name
-  principal     = "elasticloadbalancing.amazonaws.com"
-  source_arn    = aws_lb_target_group.default.arn
-}
 
-resource "aws_lambda_permission" "apigw_lambda" {
-  statement_id  = "AllowExecutionFromAPIGateway"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.lambda.function_name
-  principal     = "apigateway.amazonaws.com"
-  # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
-  source_arn = "arn:aws:execute-api:us-east-1:906259781909:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.method.http_method}${aws_api_gateway_resource.resource.path}"
-}
 
 resource "aws_api_gateway_rest_api" "api" {
   name = "jclip"
 }
+
+
 
 resource "aws_api_gateway_resource" "resource" {
   path_part   = "api"
@@ -307,6 +294,24 @@ resource "aws_cloudwatch_log_group" "example" {
   retention_in_days = 14
 }
 
+resource "aws_lambda_permission" "apigw_lambda" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda.function_name
+  principal     = "apigateway.amazonaws.com"
+  # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
+  source_arn = "${aws_api_gateway_rest_api.api.execution_arn}/*/*/*"
+
+  # source_arn = "arn:aws:execute-api:us-east-1:906259781909:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.method.http_method}${aws_api_gateway_resource.resource.path}"
+}
+
+resource "aws_lambda_permission" "with_lb" {
+  statement_id  = "AllowExecutionFromLB"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda.function_name
+  principal     = "elasticloadbalancing.amazonaws.com"
+  source_arn    = aws_lb_target_group.default.arn
+}
 
 
 # return base url
