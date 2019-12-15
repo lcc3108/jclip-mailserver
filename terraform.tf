@@ -79,6 +79,7 @@ resource "aws_s3_bucket" "jclip_bucket" {
 }
 
 resource "aws_s3_bucket_object" "jclip_bucket_object" {
+  depends_on = [aws_s3_bucket.jclip_bucket]
   bucket = "jclip"
   key    = "${data.archive_file.jclip_zip.output_md5}.zip"
   source = "dist.zip"
