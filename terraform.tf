@@ -313,6 +313,7 @@ output "aws_url" {
   value = aws_lb.default.dns_name
 }
 
+
 output "gcp_url" {
   value = google_cloudfunctions_function.function.https_trigger_url 
 }
