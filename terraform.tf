@@ -190,15 +190,12 @@ resource "aws_lambda_permission" "with_lb" {
 }
 
 resource "aws_lb_target_group_attachment" "default" {
-  depends_on = [aws_lambda_function.lambda]
+  depends_on = [aws_lambda_function.lambda, aws_lb_target_group.default]
   target_group_arn = aws_lb_target_group.default.arn
   target_id        = aws_lambda_function.lambda.arn
 }
 
-# return base url
-output "base_url" {
-  value = aws_lb.default.dns_name
-}
+
 #API gateway
 resource "aws_api_gateway_stage" "default" {
   stage_name    = "default"
@@ -302,4 +299,13 @@ resource "aws_iam_role" "iam_for_lambda" {
   ]
 }
 EOF
+}
+
+# return base url
+output "aws_url" {
+  value = aws_lb.default.dns_name
+}
+
+output "gcp_url" {
+  value = google_cloudfunctions_function.function.https_trigger_url 
 }
