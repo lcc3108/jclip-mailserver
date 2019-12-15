@@ -174,10 +174,9 @@ resource "aws_lb_listener_rule" "lambda" {
     type             = "forward"
     target_group_arn =  aws_lb_target_group.default.arn
   }
-  condition{
-    path_pattern {
-      values = ["/**"]
-    }
+  condition {
+      field  = "path-pattern" 
+      values = ["/**"] 
   }
   
 }
@@ -191,6 +190,7 @@ resource "aws_lambda_permission" "with_lb" {
 }
 
 resource "aws_lb_target_group_attachment" "default" {
+  depends_on = [aws_lambda_function.lambda]
   target_group_arn = aws_lb_target_group.default.arn
   target_id        = aws_lambda_function.lambda.arn
 }
